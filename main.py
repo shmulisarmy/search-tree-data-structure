@@ -3,6 +3,7 @@ code sample:
     words = ["hello", "world", "how", "are", "you", "heck"]
     tree = SearchTree(words)
     print(tree.firstNThatStartWith(3, "h")) -> ['how', 'heck', 'hello']
+    github link: https://github.com/shmulisarmy/search-tree-data-structure
 """
 
 
