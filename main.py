@@ -20,19 +20,22 @@ class SearchTree:
         isPrefix(letters)\n
         firstNThatStartWith(n, letters)\n
     """
-    def insert(self, word):
-        node = self.root
-        for letter in word:
-            node = node[letter]
-        node['word'] = word
-
     def __init__(self, initialWords=[]):
         """
         param: initialWords - (optional) list of words to load initially
         """
         self.root = inifiniteDict()
         for word in initialWords:
-            self.insert(word)
+            self.__iadd__(word)
+
+    def __iadd__(self, word):
+        node = self.root
+        for letter in word:
+            node = node[letter]
+        node['word'] = word
+        return self
+
+    
 
     def isWord(self, word):
         node = self.root
@@ -42,7 +45,7 @@ class SearchTree:
             node = node[letter]
         return 'word' in node
     
-    def isPrefix(self, letters):
+    def __contains__(self, letters):
         """returns true if there is a letters that starts with param: letters"""
         node = self.root
         for letter in letters:
@@ -51,16 +54,18 @@ class SearchTree:
             node = node[letter]
         return True
     
-    def firstNThatStartWith(self, n: int, letters) -> list|bool:
-        """
-        param: n - the number of words you want to return\n
-
-        
+    def __getitem__(self, args) -> list:
+        try:
+            searchString, maxResults = args
+        except:
+            raise TypeError("expected 2 arguments, search string and the max number of results")
+        """        
         code sample:\n
-        print(tree.firstNThatStartWith(2, "h")) -> ['how', 'hey'] (gets shorter words first (breadth first search))\n
+        does a a breadth first search starting from where ever the search string takes us into the tree\n
+        print(tree.__getitem__(2, "h")) -> ['how', 'hey'] (gets shorter words first (breadth first search))\n
         """
         node = self.root
-        for letter in letters:
+        for letter in searchString:
             if letter not in node:
                 return False
             node = node[letter]
@@ -72,10 +77,64 @@ class SearchTree:
             node = que.pop(0)
             if 'word' in node:
                 wordsCollected.append(node['word'])
-                if len(wordsCollected) >= n:
+                if len(wordsCollected) >= maxResults:
                     return wordsCollected
             for letter in node:
                 if letter != 'word':
                     que.append(node[letter])
 
         return wordsCollected
+    
+
+    def getAllWords(self):
+        node = self.root
+        que = [node]
+        wordsCollected = []
+
+        while len(que) > 0:
+            node = que.pop(0)
+            if 'word' in node:
+                wordsCollected.append(node['word'])
+            for letter in node:
+                if letter != 'word':
+                    que.append(node[letter])
+
+        return wordsCollected
+    
+
+    def __repr__(self): 
+        return f"""
+                this is a search tree that contains 
+                {len(self.getAllWords())} words all of wich can be displayed 
+                with .display() or queried for with [] syntax 
+                (eg tree['h', 3] -> ['how', 'heck', 'hello'])
+                """
+
+    def display(self):
+        node = self.root
+        que = [node]
+        wordsCollected = []
+
+        while len(que) > 0:
+            node = que.pop(0)
+            if 'word' in node:
+                wordsCollected.append(node['word'])
+            for letter in node:
+                if letter != 'word':
+                    que.append(node[letter])
+
+        print("************Search Tree************")
+        print("words: ", len(wordsCollected))
+        print(*wordsCollected, sep=", ")
+    
+
+if __name__ == "__main__":
+    words = ["hello", "world", "how", "are", "you", "heck"]
+    tree = SearchTree(words)
+    tree += "heops"
+    print(tree["h", 3]) #-> ['how', 'heck', 'hello']
+    print("wo" in tree) #-> True because world is in the tree
+    tree.display()
+    print(tree)
+
+
