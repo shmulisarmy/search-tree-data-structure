@@ -1,1 +1,1 @@
-from .main import SearchTree
+from searchTree import SearchTree
