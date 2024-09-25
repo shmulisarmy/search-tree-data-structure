@@ -1,0 +1,16 @@
+name: search-tree-data-structure
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy
+  - pandas
+  - scikit-learn
+  - pytest
+  - pylint
+  - black
+  - sqlite
+  - pip
+  - pip:
+      - fastapi
+      - uvicorn
